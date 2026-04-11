@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Hall of Heroes</title>
+    <title>THE HALL OF HEROES</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -16,20 +16,30 @@
             height: 100vh;
             overflow: hidden; 
             color: white;
+            text-transform: uppercase; 
         }
 
         h1 {
-            text-transform: uppercase;
             letter-spacing: 2px;
-            margin: 5px 0;
+            margin: 5px 0 2px 0;
             font-size: 1.4rem;
             flex-shrink: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            opacity: 0.9;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+            color: #f1c40f; /* Un tocco di giallo per far risaltare l'istruzione */
         }
 
         .gallery-container {
             position: relative;
             width: 100vw;
-            height: 88vh;
+            height: 85vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -42,7 +52,7 @@
             height: 100%;
         }
 
-        /* --- VISUALIZZAZIONE COMPUTER (GRIGLIA 5x2) --- */
+        /* --- CONFIGURAZIONE COMPUTER (GRIGLIA 5x2 SENZA SCROLL) --- */
         @media (min-width: 1025px) {
             .gallery {
                 grid-template-columns: repeat(5, 1fr);
@@ -52,15 +62,18 @@
             .nav-btn { display: none !important; }
             .card { display: block !important; }
             
-            /* Font adattivo per Computer: si rimpicciolisce se l'altezza dello schermo è poca */
             .card-back {
-                font-size: clamp(0.7rem, 1.2vh, 0.9rem) !important;
+                font-size: clamp(10px, 1.25vh, 14px) !important;
                 line-height: 1.1 !important;
+                overflow: hidden !important; 
+                padding: 8px !important;
             }
-            .card-back h2 { font-size: clamp(0.8rem, 1.5vh, 1rem) !important; }
+            .card-back h2 { font-size: 0.85rem !important; margin-bottom: 3px !important; }
+            .card-back p { margin: 1px 0 !important; }
+            .card-back b { margin-top: 2px !important; font-size: 0.65rem !important; }
         }
 
-        /* --- VISUALIZZAZIONE TELEFONO/TABLET (SLIDER) --- */
+        /* --- CONFIGURAZIONE TELEFONO (SLIDER CON FRECCE) --- */
         @media (max-width: 1024px) {
             .gallery {
                 display: flex;
@@ -94,10 +107,14 @@
             }
             .prev { left: 10px; } 
             .next { right: 10px; }
-            .card-back { font-size: 0.9rem; line-height: 1.3; }
+            .card-back { 
+                font-size: 0.9rem; 
+                line-height: 1.25; 
+                overflow-y: auto; 
+                padding: 15px;
+            }
         }
 
-        /* STILE CARD GENERALE */
         .card {
             perspective: 1000px;
             cursor: pointer;
@@ -130,32 +147,29 @@
             background-color: white;
             color: #1b263b;
             transform: rotateY(180deg);
-            padding: 8px;
             box-sizing: border-box;
             border: 5px solid;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            /* Rimosso overflow per evitare barre di scorrimento su PC */
-            overflow: hidden;
+            text-transform: uppercase; 
         }
 
         .card-back h2 {
-            margin: 0 0 5px 0;
+            margin: 0;
             color: #e63946;
             text-align: center;
             border-bottom: 2px solid #e63946;
-            text-transform: uppercase;
             flex-shrink: 0;
         }
 
-        .card-back p { margin: 2px 0; }
-        .card-back b { color: #e63946; text-transform: uppercase; font-size: 0.8em; display: block; margin-top: 2px; }
+        .card-back b { color: #e63946; display: block; }
     </style>
 </head>
 <body>
 
-    <h1>The Hall of Heroes</h1>
+    <h1>THE HALL OF HEROES</h1>
+    <div class="subtitle">CLICCA LE CARDS PER SCOPRIRE I POTERI DEGLI EROI!</div>
 
     <div class="gallery-container">
         <button class="nav-btn prev" onclick="changeCard(-1)">&#10094;</button>
@@ -239,7 +253,7 @@
                     <div class="card-back" style="border-color: #c90000;">
                         <h2>Vedova Nera</h2>
                         <p><b>Storia:</b> Natalia Romanova, ex spia del KGB addestrata nella Stanza Rossa prima dei Vendicatori.</p>
-                        <p><b>Forza:</b> Esperta in spionaggio, arti marziali e sistema immunitario potenziato dal siero.</p>
+                        <p><b>Forza:</b> Esperta in spionaggio, arti marziali e sistema immitunitario potenziato dal siero.</p>
                         <p><b>Debolezza:</b> Nessun potere su larga scala; vulnerabile come un normale essere umano.</p>
                     </div>
                 </div>
@@ -251,8 +265,8 @@
                     <div class="card-back" style="border-color: #0077be;">
                         <h2>Thor</h2>
                         <p><b>Storia:</b> Il Dio del Tuono asgardiano, figlio di Odino, inviato sulla Terra per imparare l'umiltà.</p>
-                        <p><b>Forza:</b> Forza divina, longevità e controllo dei fulmini. Il martello Mjolnir gli permette di volare.</p>
-                        <p><b>Debolezza:</b> Se separato dal martello o se diventa "indegno", perde gran parte dei poteri.</p>
+                        <p><b>Forza:</b> Forza divina, longevità e controllo dei fulmini. Martello Mjolnir per volare.</p>
+                        <p><b>Debolezza:</b> Se separato dal martello o se diventa "indegno", perde i poteri.</p>
                     </div>
                 </div>
             </div>
@@ -276,7 +290,7 @@
                         <h2>Scarlet Witch</h2>
                         <p><b>Storia:</b> Wanda Maximoff ottiene poteri da esperimenti o magia del caos. Si unisce ai Vendicatori per l'umanità.</p>
                         <p><b>Forza:</b> Manipola la realtà (Magia del Caos). Può creare campi di forza, volare e usare telecinesi.</p>
-                        <p><b>Debolezza:</b> Poteri legati allo stato emotivo. Corpo fisico vulnerabile come un normale umano.</p>
+                        <p><b>Debolezza:</b> Poteri emotivi; corpo fisico umano vulnerabile.</p>
                     </div>
                 </div>
             </div>
@@ -293,14 +307,20 @@
             if (window.innerWidth <= 1024) {
                 cards[currentIdx].classList.remove('flipped');
                 cards[currentIdx].classList.remove('active');
-
-                currentIdx += step;
-                if (currentIdx >= cards.length) currentIdx = 0;
-                if (currentIdx < 0) currentIdx = cards.length - 1;
-
+                currentIdx = (currentIdx + step + cards.length) % cards.length;
                 cards[currentIdx].classList.add('active');
             }
         }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                cards.forEach(card => card.classList.add('active'));
+            } else {
+                cards.forEach((card, index) => {
+                    if (index !== currentIdx) card.classList.remove('active');
+                });
+            }
+        });
     </script>
 </body>
 </html>
