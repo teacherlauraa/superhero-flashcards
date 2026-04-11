@@ -3,25 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le mie Flashcards dei Supereroi</title>
+    <title>The Hall of Heroes</title>
     <style>
-        /* SFONDO E DISPOSIZIONE DELLE CARD */
+        /* LAYOUT BLOCCATO SULLO SCHERMO */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212; /* Colore scuro tipo cinema */
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            padding: 50px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #0d1b2a; 
             margin: 0;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; 
+            color: white;
         }
 
-        /* STRUTTURA DELLA CARD */
+        h1 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 5px 0;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* GRIGLIA FISSA 5x2 */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 8px;
+            width: 98vw;
+            height: 88vh;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
         .card {
-            width: 280px;
-            height: 400px;
-            perspective: 1000px; /* Necessario per l'effetto 3D */
+            width: 100%;
+            height: 100%;
+            perspective: 1000px;
             cursor: pointer;
         }
 
@@ -29,108 +51,194 @@
             position: relative;
             width: 100%;
             height: 100%;
-            text-align: center;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
 
-        /* Classe aggiunta col click (JavaScript) */
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
 
         .card-front, .card-back {
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden; /* Nasconde il retro quando non girato */
-            border-radius: 15px;
+            backface-visibility: hidden;
+            border-radius: 8px;
             overflow: hidden;
+        }
+
+        .card-front img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+
+        /* RETRO DELLE CARD - TESTO GRANDE E VISIBILE */
+        .card-back {
+            background-color: white;
+            color: #1b263b;
+            transform: rotateY(180deg);
+            padding: 8px; /* Padding ridotto per massimizzare lo spazio */
+            box-sizing: border-box;
+            border: 5px solid;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* STILE DEL FRONTE (Immagine) */
-        .card-front {
-            background-color: #222;
-        }
-
-        .card-front img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Adatta l'immagine senza distorcerla */
-        }
-
-        /* STILE DEL RETRO (Testo) */
-        .card-back {
-            background-color: #f1f1f1;
-            color: #333;
-            transform: rotateY(180deg);
-            padding: 20px;
-            box-sizing: border-box;
+            justify-content: flex-start;
+            font-size: 0.85rem; /* Carattere grande come richiesto */
+            line-height: 1.15; /* Interlinea compatta per far stare tutto */
+            overflow: hidden; /* Blocca categoricamente lo scroll */
         }
 
         .card-back h2 {
-            margin-top: 0;
+            margin: 0 0 5px 0;
+            font-size: 1rem;
             color: #e63946;
+            text-align: center;
             border-bottom: 2px solid #e63946;
-            padding-bottom: 10px;
+            text-transform: uppercase;
+            flex-shrink: 0;
         }
 
-        .card-back p {
-            font-size: 0.9em;
-            line-height: 1.4;
-            text-align: left;
-            margin: 10px 0;
+        .card-back p { 
+            margin: 3px 0; 
+        }
+
+        .card-back b { 
+            color: #e63946; 
+            text-transform: uppercase; 
+            font-size: 0.7rem; 
+            display: inline-block;
+            margin-top: 2px;
         }
     </style>
 </head>
 <body>
 
-    <div class="card" onclick="this.classList.toggle('flipped')">
-        <div class="card-inner">
-            <div class="card-front">
-                <img src="https://image.api.playstation.com/vulcan/ap/rnd/202306/1219/6010530a5d12cf80036688701980a3160a2b0e77d07936a2.png" alt="Spider-Man">
-            </div>
-            <div class="card-back" style="border: 5px solid #e63946;">
-                <h2>Spider-Man</h2>
-                <p><strong>Poteri:</strong> Forza sovrumana, agilità, senso di ragno e spara-ragnatele.</p>
-                <p><strong>Debolezze:</strong> La sua bontà e il senso di colpa per lo zio Ben.</p>
-                <p><strong>Storia:</strong> Il giovane Peter Parker viene morso da un ragno radioattivo durante una gita scolastica.</p>
-            </div>
-        </div>
-    </div>
+    <h1>The Hall of Heroes</h1>
 
-    <div class="card" onclick="this.classList.toggle('flipped')">
-        <div class="card-inner">
-            <div class="card-front">
-                <img src="https://static.dc.com/dc/files/default_images/Char_Profile_Batman_20190115_5c3e2718b06061.94611310.jpg" alt="Batman">
-            </div>
-            <div class="card-back" style="border: 5px solid #111;">
-                <h2>Batman</h2>
-                <p><strong>Poteri:</strong> Nessuno. È un maestro di arti marziali e usa tecnologie avanzatissime.</p>
-                <p><strong>Debolezze:</strong> I suoi traumi psicologici e i limiti del corpo umano.</p>
-                <p><strong>Storia:</strong> Bruce Wayne dedica la sua vita a combattere il crimine dopo aver perso i genitori.</p>
+    <div class="gallery">
+        
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="spiderman.jpg"></div>
+                <div class="card-back" style="border-color: #e63946;">
+                    <h2>Spider-Man</h2>
+                    <p><b>Storia:</b> Peter Parker ottiene poteri da un ragno radioattivo. Decide di aiutare gli altri seguendo la responsabilità.</p>
+                    <p><b>Forza:</b> Forza sovrumana, agilità, ragnatele e sensi ipersviluppati (senso di ragno).</p>
+                    <p><b>Debolezza:</b> Fragilità umane e problemi quotidiani.</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="card" onclick="this.classList.toggle('flipped')">
-        <div class="card-inner">
-            <div class="card-front">
-                <img src="https://static.dc.com/dc/files/default_images/Char_Profile_WonderWoman_20190115_5c3e273d2f9541.21666714.jpg" alt="Wonder Woman">
-            </div>
-            <div class="card-back" style="border: 5px solid #ccac00;">
-                <h2>Wonder Woman</h2>
-                <p><strong>Poteri:</strong> Super forza, volo, velocità e il Lazo della Verità.</p>
-                <p><strong>Debolezze:</strong> Perdere i bracciali può renderla vulnerabile.</p>
-                <p><strong>Storia:</strong> Diana Prince è la principessa delle Amazzoni di Themyscira.</p>
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="IRONMAN.jpg"></div>
+                <div class="card-back" style="border-color: #f1c40f;">
+                    <h2>Iron Man</h2>
+                    <p><b>Storia:</b> Tony Stark costruisce un'armatura per salvarsi dopo essere stato ferito e catturato in guerra.</p>
+                    <p><b>Forza:</b> Volo supersonico, forza, raggi repulsori e intelletto geniale mondiale.</p>
+                    <p><b>Debolezza:</b> Dipendenza totale dalla tecnologia e dalla scorta di energia.</p>
+                </div>
             </div>
         </div>
+
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="Capitan America.jpg"></div>
+                <div class="card-back" style="border-color: #1d4ed8;">
+                    <h2>Capitan America</h2>
+                    <p><b>Storia:</b> Steve Rogers trasformato nel supersoldato perfetto grazie a un siero speciale nella WWII.</p>
+                    <p><b>Forza:</b> Forza e agilità ai limiti umani; maestro tattico e scudo indistruttibile.</p>
+                    <p><b>Debolezza:</b> Non possiede poteri divini, restando vulnerabile come un normale umano.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="Wonderwoman (2).jpg"></div>
+                <div class="card-back" style="border-color: #f1c40f;">
+                    <h2>Wonder Woman</h2>
+                    <p><b>Storia:</b> Diana, principessa delle Amazzoni, figlia di Zeus. Porta pace nel mondo degli uomini.</p>
+                    <p><b>Forza:</b> Forza divina, volo, immortalità, Lazo della Verità e bracciali indistruttibili.</p>
+                    <p><b>Debolezza:</b> Vulnerabile alle armi da taglio o proiettili se colpita con forza.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="Hulk (3).jpg"></div>
+                <div class="card-back" style="border-color: #2d6a4f;">
+                    <h2>Hulk</h2>
+                    <p><b>Storia:</b> Bruce Banner investito da raggi gamma. Si trasforma in colosso verde quando prova rabbia.</p>
+                    <p><b>Forza:</b> Forza fisica illimitata che cresce con la rabbia e fattore rigenerante istantaneo.</p>
+                    <p><b>Debolezza:</b> Trasformazione spesso incontrollabile e perdita dell'intelligenza razionale.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="Batman (3).jpg"></div>
+                <div class="card-back" style="border-color: #343a40;">
+                    <h2>Batman</h2>
+                    <p><b>Storia:</b> Bruce Wayne giura di combattere il crimine a Gotham come giustiziere dopo la morte dei genitori.</p>
+                    <p><b>Forza:</b> Miglior detective del mondo, esperto in arti marziali e tecnologia avanzatissima.</p>
+                    <p><b>Debolezza:</b> Comune essere umano; la sua efficacia dipende da preparazione e gadget.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="vedova nera.jpg"></div>
+                <div class="card-back" style="border-color: #c90000;">
+                    <h2>Vedova Nera</h2>
+                    <p><b>Storia:</b> Natalia Romanova, ex spia del KGB addestrata nella Stanza Rossa prima dei Vendicatori.</p>
+                    <p><b>Forza:</b> Esperta in spionaggio, arti marziali e sistema immunitario potenziato dal siero.</p>
+                    <p><b>Debolezza:</b> Nessun potere su larga scala; vulnerabile come un normale essere umano.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="thor2.jpg"></div>
+                <div class="card-back" style="border-color: #0077be;">
+                    <h2>Thor</h2>
+                    <p><b>Storia:</b> Il Dio del Tuono asgardiano, figlio di Odino, inviato sulla Terra per imparare l'umiltà.</p>
+                    <p><b>Forza:</b> Forza divina, longevità e controllo dei fulmini. Il martello Mjolnir per volare.</p>
+                    <p><b>Debolezza:</b> Se separato dal martello o se diventa "indegno", perde gran parte dei poteri.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="6.jpg"></div>
+                <div class="card-back" style="border-color: #f1c40f;">
+                    <h2>Superman</h2>
+                    <p><b>Storia:</b> Kal-El, nato su Krypton e adottato dai Kent sulla Terra prima della fine del suo mondo.</p>
+                    <p><b>Forza:</b> Casi invulnerabile sotto il sole giallo; volo, vista calorifica e forza sovrumana.</p>
+                    <p><b>Debolezza:</b> Vulnerabile alla Kryptonite, alla magia e perde i poteri sotto un sole rosso.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><img src="Blu e Bianco Audace Sportivo Calcio Logo (2).jpg"></div>
+                <div class="card-back" style="border-color: #c90000;">
+                    <h2>Scarlet Witch</h2>
+                    <p><b>Storia:</b> Wanda Maximoff ottiene poteri da esperimenti o magia. Si unisce ai Vendicatori per l'umanità.</p>
+                    <p><b>Forza:</b> Manipola la realtà (Magia del Caos). Crea campi di forza, vola e usa telecinesi.</p>
+                    <p><b>Debolezza:</b> Poteri legati allo stato emotivo. Corpo fisico vulnerabile come un umano.</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </body>
