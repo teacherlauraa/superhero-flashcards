@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE HALL OF HEROES</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #0d1b2a; 
+            margin: 0;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; 
+            color: white;
+            text-transform: uppercase; 
+        }
+
+        h1 {
+            letter-spacing: 2px;
+            margin: 5px 0 2px 0;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+            opacity: 0.9;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+            color: #f1c40f;
+            text-align: center;
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100vw;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery {
+            display: grid;
+            gap: 10px;
+            width: 98vw;
+            height: 100%;
+        }
+
+        /* --- DESKTOP 5x2 --- */
+        @media (min-width: 1025px) {
+            .gallery {
+                grid-template-columns: repeat(5, 1fr);
+                grid-template-rows: repeat(2, 1fr);
+            }
+            .nav-btn { display: none !important; }
+        }
+
+        /* --- MOBILE SLIDER --- */
+        @media (max-width: 1024px) {
+            .gallery { display: flex; justify-content: center; align-items: center; }
+            .card { display: none; width: 70vw; max-width: 280px; height: 420px; }
+            .card.active { display: block; }
+            .nav-btn {
+                display: flex !important;
+                position: absolute;
+                top: 50%; transform: translateY(-50%);
+                background: rgba(0, 0, 0, 0.7);
+                border: 2px solid white; color: white;
+                font-size: 1.5rem; width: 45px; height: 45px;
+                cursor: pointer; border-radius: 50%; z-index: 10;
+            }
+            .prev { left: 10px; } .next { right: 10px; }
+        }
+
+        /* --- STILE CARDS --- */
+        .card {
+            perspective: 1000px;
+            cursor: pointer;
+            z-index: 1;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                        width 0.6s ease, height 0.6s ease, left 0.6s ease, top 0.6s ease;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%; height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 12px;
+            box-sizing: border-box;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+
+        .card.ghost { visibility: hidden; pointer-events: none; }
+
+        /* --- STATO ESPANSO (RETTANGOLO VERTICALE CONTENUTO) --- */
+        .card.expanded {
+            position: fixed !important;
+            z-index: 1000 !important;
+            margin: 0 !important;
+            max-height: 90vh; /* Garantisce che si vedano i bordi sopra e sotto */
+        }
+
+        .card.expanded .card-inner {
+            border: 6px solid currentcolor; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .card-front img { width: 100%; height: 100%; object-fit: cover; }
+
+        .card-back {
+            background-color: white; color: #1b263b;
+            transform: rotateY(180deg);
+            display: flex; flex-direction: column;
+            padding: 10px; font-size: 0.7rem; line-height: 1.1;
+        }
+
+        /* TESTO INGRANDITO ESPANSO */
+        .card.expanded .card-back {
+            font-size: 1.1rem !important;
+            line-height: 1.3 !important;
+            padding: 25px !important;
+            justify-content: flex-start;
+        }
+
+        .card.expanded .card-back h2 { font-size: 1.4em !important; margin-bottom: 12px !important; }
+        .card.expanded .card-back b { font-size: 0.85em !important; margin-top: 8px !important; }
+
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.94);
+            display: none; z-index: 998;
+        }
+
+        .card-back h2 { color: #e63946; text-align: center; border-bottom: 2px solid #e63946; margin: 0 0 5px 0; font-size: 1.1em; }
+        .card-back b { color: #e63946; display: block; margin-top: 5px; font-size: 0.9em; }
+        .card-back p { margin: 3px 0; }
+    </style>
+</head>
+<body>
+
+    <div id="overlay" onclick="closeExpanded()"></div>
+
+    <h1>THE HALL OF HEROES</h1>
+    <div class="subtitle">1° CLICK: GIRA • 2° CLICK: ESPANDI • 3° CLICK: RESET</div>
+
+    <div class="gallery-container">
+        <button class="nav-btn prev" onclick="changeCard(-1)">&#10094;</button>
+        
+        <div class="gallery" id="heroGrid">
+            <div class="card active" style="color: #e63946;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="spiderman.jpg"></div>
+                    <div class="card-back">
+                        <h2>Spider-Man</h2>
+                        <p><b>Storia:</b> Peter Parker ottiene poteri da un ragno radioattivo. Decide di aiutare gli altri seguendo il principio di responsabilità.</p>
+                        <p><b>Forza:</b> Forza sovrumana, agilità, ragnatele e sensi ipersviluppati (senso di ragno).</p>
+                        <p><b>Debolezza:</b> Fragilità umane e problemi quotidiani.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="color: #f1c40f;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="IRONMAN.jpg"></div>
+                    <div class="card-back">
+                        <h2>Iron Man</h2>
+                        <p><b>Storia:</b> Tony Stark costruisce un'armatura tecnologica per salvarsi dopo essere stato ferito e catturato in guerra.</p>
+                        <p><b>Forza:</b> Volo supersonico, forza, raggi repulsori e intelletto geniale di livello mondiale.</p>
+                        <p><b>Debolezza:</b> Dipendenza totale dalla tecnologia e dalla scorta di energia.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="color: #1d4ed8;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="Capitan America.jpg"></div>
+                    <div class="card-back">
+                        <h2>Capitan America</h2>
+                        <p><b>Storia:</b> Steve Rogers trasformato nel supersoldato perfetto grazie a un siero speciale nella WWII.</p>
+                        <p><b>Forza:</b> Forza e agilità ai limiti umani; maestro tattico e scudo praticamente indistruttibile.</p>
+                        <p><b>Debolezza:</b> Non possiede poteri divini, restando vulnerabile come un normale umano.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="color: #f1c40f;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="Wonderwoman (2).jpg"></div>
+                    <div class="card-back">
+                        <h2>Wonder Woman</h2>
+                        <p><b>Storia:</b> Diana, principessa delle Amazzoni, figlia di Zeus. Porta pace nel mondo degli uomini.</p>
+                        <p><b>Forza:</b> Forza divina, volo, immortalità, Lazo della Verità e bracciali indistruttibili.</p>
+                        <p><b>Debolezza:</b> Vulnerabile alle armi da taglio o proiettili se colpita con forza.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="color: #2d6a4f;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="Hulk (3).jpg"></div>
+                    <div class="card-back">
+                        <h2>Hulk</h2>
+                        <p><b>Storia:</b> Bruce Banner investito da raggi gamma. Si trasforma in gigante verde quando prova rabbia o stress.</p>
+                        <p><b>Forza:</b> Forza fisica illimitata che cresce con la rabbia e fattore rigenerante istantaneo.</p>
+                        <p><b>Debolezza:</b> Trasformazione spesso incontrollabile e perdita dell'intelligenza razionale.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="color: #343a40;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="Batman (3).jpg"></div>
+                    <div class="card-back">
+                        <h2>Batman</h2>
+                        <p><b>Storia:</b> Bruce Wayne combatte il crimine a Gotham City usando tecnologia e arti marziali dopo la morte dei genitori.</p>
+                        <p><b>Forza:</b> Miglior detective del mondo, esperto in gadget e strategia.</p>
+                        <p><b>Debolezza:</b> Comune essere umano; dipende totalmente da preparazione.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="color: #c90000;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="vedova nera.jpg"></div>
+                    <div class="card-back">
+                        <h2>Vedova Nera</h2>
+                        <p><b>Storia:</b> Natalia Romanova, ex spia del KGB addestrata nella Stanza Rossa prima dei Vendicatori.</p>
+                        <p><b>Forza:</b> Esperta in spionaggio, arti marziali e sistema immunitario potenziato dal siero.</p>
+                        <p><b>Debolezza:</b> Nessun potere su larga scala; vulnerabile come un normale essere umano.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="color: #0077be;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="thor2.jpg"></div>
+                    <div class="card-back">
+                        <h2>Thor</h2>
+                        <p><b>Storia:</b> Il Dio del Tuono asgardiano, figlio di Odino, inviato sulla Terra per imparare l'umiltà.</p>
+                        <p><b>Forza:</b> Forza divina, longevità e controllo dei fulmini. Martello Mjolnir per volare.</p>
+                        <p><b>Debolezza:</b> Se separato dal martello o se diventa "indegno", perde gran parte dei poteri.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="color: #f1c40f;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="6.jpg"></div>
+                    <div class="card-back">
+                        <h2>Superman</h2>
+                        <p><b>Storia:</b> Kal-El, nato su Krypton e adottato dai Kent sulla Terra prima della distruzione del suo mondo.</p>
+                        <p><b>Forza:</b> Quasi invulnerabile sotto il sole giallo; volo, vista calorifica e forza sovrumana.</p>
+                        <p><b>Debolezza:</b> Vulnerabile alla Kryptonite, alla magia e perde i poteri sotto un sole rosso.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="color: #c90000;" onclick="handleCardClick(this)">
+                <div class="card-inner">
+                    <div class="card-front"><img src="Blu e Bianco Audace Sportivo Calcio Logo (2).jpg"></div>
+                    <div class="card-back">
+                        <h2>Scarlet Witch</h2>
+                        <p><b>Storia:</b> Wanda Maximoff ottiene poteri da esperimenti o magia del caos. Si unisce ai Vendicatori per l'umanità.</p>
+                        <p><b>Forza:</b> Manipola la realtà (Magia del Caos). Può creare campi di forza, volare e usare telecinesi.</p>
+                        <p><b>Debolezza:</b> Poteri emotivi; corpo fisico umano vulnerabile.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="nav-btn next" onclick="changeCard(1)">&#10095;</button>
+    </div>
+
+    <script>
+        let currentIdx = 0;
+        let expandedCard = null;
+        let ghostCard = null;
+        let originalRect = null;
+        const cards = document.querySelectorAll('.card');
+        const overlay = document.getElementById('overlay');
+
+        function handleCardClick(card) {
+            if (card.classList.contains('expanded')) {
+                closeExpanded();
+                return;
+            }
+            if (!card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+            } else {
+                expandCard(card);
+            }
+        }
+
+        function expandCard(card) {
+            expandedCard = card;
+            originalRect = card.getBoundingClientRect();
+
+            ghostCard = card.cloneNode(true);
+            ghostCard.classList.add('ghost');
+            card.parentNode.insertBefore(ghostCard, card);
+
+            card.style.width = originalRect.width + 'px';
+            card.style.height = originalRect.height + 'px';
+            card.style.top = originalRect.top + 'px';
+            card.style.left = originalRect.left + 'px';
+            card.classList.add('expanded');
+            overlay.style.display = 'block';
+
+            requestAnimationFrame(() => {
+                const isMobile = window.innerWidth <= 1024;
+                // Dimensioni verticali fisse ma proporzionate
+                const targetW = isMobile ? window.innerWidth * 0.82 : 420;
+                const targetH = isMobile ? window.innerHeight * 0.75 : 620;
+
+                card.style.width = targetW + 'px';
+                card.style.height = targetH + 'px';
+                card.style.top = '50%';
+                card.style.left = '50%';
+                card.style.transform = 'translate(-50%, -50%)';
+            });
+        }
+
+        function closeExpanded() {
+            if (!expandedCard) return;
+
+            const ghostRect = ghostCard.getBoundingClientRect();
+            expandedCard.style.width = ghostRect.width + 'px';
+            expandedCard.style.height = ghostRect.height + 'px';
+            expandedCard.style.top = ghostRect.top + 'px';
+            expandedCard.style.left = ghostRect.left + 'px';
+            expandedCard.style.transform = 'translate(0, 0)';
+            overlay.style.display = 'none';
+
+            setTimeout(() => {
+                expandedCard.classList.remove('expanded', 'flipped');
+                expandedCard.style = '';
+                if (ghostCard) ghostCard.remove();
+                expandedCard = null;
+            }, 600);
+        }
+
+        function changeCard(step) {
+            if(expandedCard) closeExpanded();
+            cards[currentIdx].classList.remove('active', 'flipped');
+            currentIdx = (currentIdx + step + cards.length) % cards.length;
+            cards[currentIdx].classList.add('active');
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                cards.forEach(card => card.classList.add('active'));
+            } else {
+                cards.forEach((card, index) => {
+                    if (index !== currentIdx) card.classList.remove('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
